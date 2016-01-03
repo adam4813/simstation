@@ -3,7 +3,6 @@ package com.greenstargames.simstation.sprites.sections;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.greenstargames.simstation.sprites.GridElement;
 import com.greenstargames.simstation.sprites.modules.StationModule;
 
 /**
@@ -31,7 +30,7 @@ public class HullSection extends StationModule {
 	}
 
 	@Override
-	public boolean canContain(GridElement element) {
+	public boolean canContain(StationModule module) {
 		return true;
 	}
 
@@ -42,12 +41,7 @@ public class HullSection extends StationModule {
 	}
 
 	@Override
-	public GridElement factory(int x, int y) {
+	public StationModule factory(int x, int y) {
 		return new HullSection(x, y);
-	}
-
-	@Override
-	public void onPlaced() {
-
 	}
 }

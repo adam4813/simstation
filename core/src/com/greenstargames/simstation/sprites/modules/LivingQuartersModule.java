@@ -3,7 +3,6 @@ package com.greenstargames.simstation.sprites.modules;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.greenstargames.simstation.sprites.GridElement;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -24,13 +23,8 @@ public class LivingQuartersModule extends StationModule {
 		super(new Color(Color.CORAL), 0, 0, 1, 1, "living quarters");
 	}
 
-	public GridElement factory(int x, int y) {
+	public StationModule factory(int x, int y) {
 		return new LivingQuartersModule(x, y);
-	}
-
-	@Override
-	public void onPlaced() {
-
 	}
 
 	@Override

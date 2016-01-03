@@ -1,13 +1,13 @@
 package com.greenstargames.simstation.sprites.modules;
 
 import com.badlogic.gdx.graphics.Color;
-import com.greenstargames.simstation.sprites.GridElement;
+import com.greenstargames.simstation.sprites.Clickable;
 import com.greenstargames.simstation.sprites.sections.Renderable;
 
 /**
  * Created by Adam on 12/27/2015.
  */
-public abstract class StationModule extends Renderable implements GridElement {
+public abstract class StationModule extends Renderable implements Clickable {
 	protected String name = "";
 
 	public StationModule(Color color, int x, int y, int width, int height, String name) {
@@ -15,18 +15,17 @@ public abstract class StationModule extends Renderable implements GridElement {
 		this.name = name;
 	}
 
-	@Override
+	public abstract StationModule factory(int x, int y);
+
 	public String getName() {
 		return name;
 	}
 
-	@Override
 	public boolean isHull() {
 		return false;
 	}
 
-	@Override
-	public boolean canContain(GridElement element) {
+	public boolean canContain(StationModule module) {
 		return false;
 	}
 }

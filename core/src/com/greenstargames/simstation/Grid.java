@@ -2,7 +2,7 @@ package com.greenstargames.simstation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.greenstargames.simstation.sprites.GridElement;
+import com.greenstargames.simstation.sprites.modules.StationModule;
 
 /**
  * Created by Adam on 12/28/2015.
@@ -15,17 +15,16 @@ public class Grid {
 	}
 
 	// TODO: Multi-cell element
-	public boolean tryPlace(GridElement element, int x, int y) {
+	public boolean tryPlace(StationModule module, int x, int y) {
 		if (gridCells[x][y] == null) {
-			if (element.isHull()) {
-				gridCells[x][y] = new GridCell(element);
+			if (module.isHull()) {
+				gridCells[x][y] = new GridCell(module);
 			} else {
-				Gdx.app.log("Grid -> tryPlace", "Can't place non-hull element in an empty grid cell.");
 				return false;
 			}
 		} else {
-			if (!element.isHull() && gridCells[x][y].canContain(element)) {
-				gridCells[x][y].setModuleElement(element);
+			if (!module.isHull() && gridCells[x][y].canContain(module)) {
+				gridCells[x][y].setInnerModule(module);
 			}
 		}
 		return true;

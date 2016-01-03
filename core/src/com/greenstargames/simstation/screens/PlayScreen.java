@@ -11,10 +11,9 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.greenstargames.simstation.Grid;
 import com.greenstargames.simstation.SimStationGame;
-import com.greenstargames.simstation.sprites.GridElement;
 import com.greenstargames.simstation.sprites.modules.LivingQuartersModule;
+import com.greenstargames.simstation.sprites.modules.StationModule;
 import com.greenstargames.simstation.sprites.sections.HullSection;
-import com.greenstargames.simstation.sprites.sections.Renderable;
 
 
 /**
@@ -24,11 +23,11 @@ public class PlayScreen implements Screen {
 	public static final int GRID_SIZE = 32;
 	private Grid grid;
 
-	private static final GridElement[] placeableElements = {
+	private static final StationModule[] placeableModules = {
 			new HullSection(),
 			new LivingQuartersModule()
 	};
-	private int selectedPlaceable = 0;
+	private int selectedPlaceableModule = 0;
 
 	private final SimStationGame game;
 	private final OrthographicCamera camera;
@@ -55,42 +54,42 @@ public class PlayScreen implements Screen {
 			int x = (int) (worldCoordinates.x / GRID_SIZE);
 			int y = (int) (worldCoordinates.y / GRID_SIZE);
 
-			if (selectedPlaceable >= placeableElements.length) {
+			if (selectedPlaceableModule >= placeableModules.length) {
 					grid.onClick(x, y);
 			} else {
-				grid.tryPlace(placeableElements[selectedPlaceable].factory(x, y), x, y);
+				grid.tryPlace(placeableModules[selectedPlaceableModule].factory(x, y), x, y);
 			}
 		}
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
-			selectedPlaceable = placeableElements.length;
+			selectedPlaceableModule = placeableModules.length;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-			selectedPlaceable = 0;
+			selectedPlaceableModule = 0;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-			selectedPlaceable = 1;
+			selectedPlaceableModule = 1;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
-			selectedPlaceable = 2;
+			selectedPlaceableModule = 2;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
-			selectedPlaceable = 3;
+			selectedPlaceableModule = 3;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
-			selectedPlaceable = 4;
+			selectedPlaceableModule = 4;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
-			selectedPlaceable = 5;
+			selectedPlaceableModule = 5;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
-			selectedPlaceable = 6;
+			selectedPlaceableModule = 6;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
-			selectedPlaceable = 7;
+			selectedPlaceableModule = 7;
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) {
-			selectedPlaceable = 8;
+			selectedPlaceableModule = 8;
 		}
 	}
 
@@ -113,10 +112,10 @@ public class PlayScreen implements Screen {
 		// input.getX and input.getY are in world coordinates so unproject them to screen coordinates.
 		Vector3 worldCoords = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 		camera.unproject(worldCoords);
-		if (selectedPlaceable < placeableElements.length) {
-			((Renderable) placeableElements[selectedPlaceable]).setX((int) (worldCoords.x / GRID_SIZE));
-			((Renderable) placeableElements[selectedPlaceable]).setY((int) (worldCoords.y / GRID_SIZE));
-			((Renderable) placeableElements[selectedPlaceable]).render(shapeRenderer);
+		if (selectedPlaceableModule < placeableModules.length) {
+			placeableModules[selectedPlaceableModule].setX((int) (worldCoords.x / GRID_SIZE));
+			placeableModules[selectedPlaceableModule].setY((int) (worldCoords.y / GRID_SIZE));
+			placeableModules[selectedPlaceableModule].render(shapeRenderer);
 		}
 		shapeRenderer.end();
 	}

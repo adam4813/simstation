@@ -2,53 +2,52 @@ package com.greenstargames.simstation;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.greenstargames.simstation.sprites.Clickable;
-import com.greenstargames.simstation.sprites.GridElement;
-import com.greenstargames.simstation.sprites.sections.Renderable;
+import com.greenstargames.simstation.sprites.modules.StationModule;
 
 /**
  * Created by Adam on 12/28/2015.
  */
 public class GridCell implements Clickable {
-	private GridElement hullElement;
-	private GridElement moduleElement = null;
+	private StationModule hullModule;
+	private StationModule innerModule = null;
 
-	public GridCell(GridElement hullElement) {
-		this.hullElement = hullElement;
+	public GridCell(StationModule hullModule) {
+		this.hullModule = hullModule;
 	}
 
-	public void setHullElement(GridElement hullElement) {
-		this.hullElement = hullElement;
+	public void setHullModule(StationModule hullModule) {
+		this.hullModule = hullModule;
 	}
 
-	public GridElement getHullElement() {
-		return hullElement;
+	public StationModule getHullModule() {
+		return hullModule;
 	}
 
-	public boolean canContain(GridElement element) {
-		return moduleElement == null && hullElement.canContain(element);
+	public boolean canContain(StationModule module) {
+		return innerModule == null && hullModule.canContain(module);
 	}
 
-	public void setModuleElement(GridElement element) {
-		moduleElement = element;
+	public void setInnerModule(StationModule module) {
+		innerModule = module;
 	}
 
-	public GridElement getModuleElement() {
-		return moduleElement;
+	public StationModule getInnerModule() {
+		return innerModule;
 	}
 
 	public boolean onClick() {
-		if (moduleElement == null) {
-			hullElement.onClick();
+		if (innerModule == null) {
+			hullModule.onClick();
 		} else {
-			moduleElement.onClick();
+			innerModule.onClick();
 		}
 		return true;
 	}
 
 	public void render(ShapeRenderer shapeRenderer) {
-		((Renderable) hullElement).render(shapeRenderer);
-		if (moduleElement != null) {
-			((Renderable) moduleElement).render(shapeRenderer);
+		hullModule.render(shapeRenderer);
+		if (innerModule != null) {
+			innerModule.render(shapeRenderer);
 		}
 	}
 }
