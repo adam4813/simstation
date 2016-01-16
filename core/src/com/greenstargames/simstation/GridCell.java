@@ -15,14 +15,6 @@ public class GridCell implements Clickable {
 		this.hullModule = hullModule;
 	}
 
-	public void setHullModule(StationModule hullModule) {
-		this.hullModule = hullModule;
-	}
-
-	public StationModule getHullModule() {
-		return hullModule;
-	}
-
 	public boolean canContain(StationModule module) {
 		return innerModule == null && hullModule.canContain(module);
 	}
@@ -48,6 +40,12 @@ public class GridCell implements Clickable {
 		hullModule.render(shapeRenderer);
 		if (innerModule != null) {
 			innerModule.render(shapeRenderer);
+		}
+	}
+
+	public void update(float delta) {
+		if (innerModule != null) {
+			innerModule.update(delta);
 		}
 	}
 }
