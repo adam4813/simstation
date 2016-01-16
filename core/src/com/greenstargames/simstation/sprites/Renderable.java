@@ -1,4 +1,4 @@
-package com.greenstargames.simstation.sprites.sections;
+package com.greenstargames.simstation.sprites;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -47,5 +47,9 @@ public abstract class Renderable {
 
 	public void setX(int x) {
 		this.x = x;
+	}
+
+	public Color getColor() {
+		return color;
 	}
 }

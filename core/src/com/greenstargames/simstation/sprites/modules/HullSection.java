@@ -1,9 +1,8 @@
-package com.greenstargames.simstation.sprites.sections;
+package com.greenstargames.simstation.sprites.modules;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.greenstargames.simstation.sprites.modules.StationModule;
 
 /**
  * Created by Adam on 12/21/2015.
