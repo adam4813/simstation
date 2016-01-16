@@ -8,22 +8,20 @@ import com.greenstargames.simstation.sprites.modules.LivingQuartersModule;
  * Created by Adam on 1/2/2016.
  */
 public class Population {
+	private final LivingQuartersModule home;
+	private final float speed = 1.0f;
 	private Vector2 position;
 	private Vector2 currentPosition;
 	private Vector2 targetPosition;
-
-	public LivingQuartersModule getHome() {
-		return home;
-	}
-
-	private LivingQuartersModule home;
-	private float speed = 1.0f;
-
 	public Population(LivingQuartersModule home) {
 		this.home = home;
 		position = new Vector2();
 		currentPosition = new Vector2();
 		targetPosition = new Vector2();
+	}
+
+	public LivingQuartersModule getHome() {
+		return home;
 	}
 
 	public void setPosition(Vector2 position) {

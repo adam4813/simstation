@@ -8,23 +8,23 @@ import com.greenstargames.simstation.sprites.modules.StationModule;
  * Created by Adam on 12/28/2015.
  */
 public class GridCell implements Clickable {
-	private StationModule hullModule;
+	private final StationModule hullModule;
 	private StationModule innerModule = null;
 
 	public GridCell(StationModule hullModule) {
 		this.hullModule = hullModule;
 	}
 
-	public boolean canContain(StationModule module) {
-		return innerModule == null && hullModule.canContain(module);
-	}
-
-	public void setInnerModule(StationModule module) {
-		innerModule = module;
+	public boolean isEmpty() {
+		return innerModule == null;
 	}
 
 	public StationModule getInnerModule() {
 		return innerModule;
+	}
+
+	public void setInnerModule(StationModule module) {
+		innerModule = module;
 	}
 
 	public boolean onClick() {

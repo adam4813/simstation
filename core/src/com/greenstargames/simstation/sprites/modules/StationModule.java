@@ -30,6 +30,5 @@ public abstract class StationModule extends Renderable implements Clickable {
 	}
 
 	public void update(float delta) {
-		return;
 	}
 }

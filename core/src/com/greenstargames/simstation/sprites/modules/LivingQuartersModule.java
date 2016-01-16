@@ -12,9 +12,9 @@ import java.util.Random;
  * Created by Adam on 12/21/2015.
  */
 public class LivingQuartersModule extends StationModule {
-	private ArrayList<Population> populations = new ArrayList<Population>();
-	private int maxPopulation = 5;
-	static Color blueColor = new Color(Color.BLUE);
+	static private final Color blueColor = new Color(Color.BLUE);
+	private final ArrayList<Population> populations = new ArrayList<Population>();
+	private final int maxPopulation = 5;
 
 	public LivingQuartersModule(int x, int y) {
 		super(new Color(Color.CORAL), x, y, 1, 1, "living quarters");
@@ -66,6 +66,5 @@ public class LivingQuartersModule extends StationModule {
 				population.setTargetPosition(target);
 			}
 		}
-		return;
 	}
 }

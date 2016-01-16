@@ -35,7 +35,7 @@ public class HullSection extends StationModule {
 
 	@Override
 	public boolean onClick() {
-		Gdx.app.log("HullSecction", "Clicked on " + name + " at (" + Integer.toString(x) + ", " + Integer.toString(y) + ")");
+		Gdx.app.log("HullSection", "Clicked on " + name + " at (" + Integer.toString(x) + ", " + Integer.toString(y) + ")");
 		return false;
 	}
 

@@ -27,7 +27,7 @@ public class Grid {
 					return false;
 				}
 			} else {
-				if (!module.isHull() && gridCells[x][y].canContain(module)) {
+				if (!module.isHull() && gridCells[x][y].isEmpty()) {
 					gridCells[x][y].setInnerModule(module);
 				}
 			}

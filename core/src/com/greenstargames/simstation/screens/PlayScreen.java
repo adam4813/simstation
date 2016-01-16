@@ -38,7 +38,7 @@ public class PlayScreen implements Screen {
 	private final OrthographicCamera camera;
 	private final Viewport viewport;
 	private final ShapeRenderer shapeRenderer;
-	private Grid grid;
+	private final Grid grid;
 	private int selectedPlaceableModule = 0;
 
 	public PlayScreen(SimStationGame simStationGame) {
@@ -84,7 +84,7 @@ public class PlayScreen implements Screen {
 		}
 	}
 
-	public void processInput(float delta) {
+	private void processInput(float delta) {
 		if (Gdx.input.justTouched()) {
 			// input.getX and input.getY are in world coordinates so unproject them to screen coordinates.
 			Vector3 worldCoordinates = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);

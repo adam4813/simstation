@@ -8,7 +8,7 @@ import com.greenstargames.simstation.screens.PlayScreen;
  * Created by Adam on 12/27/2015.
  */
 public abstract class Renderable {
-	public static final int GRID_SIZE = PlayScreen.GRID_SIZE;
+	protected static final int GRID_SIZE = PlayScreen.GRID_SIZE;
 	protected int x = 0;
 	protected int y = 0;
 	protected int width = 0;
@@ -37,16 +37,16 @@ public abstract class Renderable {
 		return x;
 	}
 
+	public void setX(int x) {
+		this.x = x;
+	}
+
 	public int getY() {
 		return y;
 	}
 
 	public void setY(int y) {
 		this.y = y;
-	}
-
-	public void setX(int x) {
-		this.x = x;
 	}
 
 	public Color getColor() {
