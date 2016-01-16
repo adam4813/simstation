@@ -2,7 +2,7 @@ package com.greenstargames.simstation.sprites.modules;
 
 import com.badlogic.gdx.graphics.Color;
 import com.greenstargames.simstation.sprites.Clickable;
-import com.greenstargames.simstation.sprites.sections.Renderable;
+import com.greenstargames.simstation.sprites.Renderable;
 
 /**
  * Created by Adam on 12/27/2015.
@@ -27,5 +27,9 @@ public abstract class StationModule extends Renderable implements Clickable {
 
 	public boolean canContain(StationModule module) {
 		return false;
+	}
+
+	public void update(float delta) {
+		return;
 	}
 }
