@@ -63,7 +63,7 @@ public class TitleScreen implements Screen {
 		quitGameButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				//game.onQuit();
+				game.onQuit();
 			}
 		});
 		quitGameButton.setPosition(Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 8, Gdx.graphics.getHeight() / 4 + Gdx.graphics.getHeight() / 8);
@@ -108,13 +108,7 @@ public class TitleScreen implements Screen {
 		stage.draw();
 	}
 
-	private void processInput(float delta) {
-		if (Gdx.input.justTouched()) {
-			if (Gdx.input.getX() < 100) {
-				game.onNewGame();
-			}
-		}
-	}
+	private void processInput(float delta) {	}
 
 	@Override
 	public void resize(int width, int height) {

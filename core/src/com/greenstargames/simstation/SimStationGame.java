@@ -10,7 +10,7 @@ public class SimStationGame extends Game {
 	private SpriteBatch batch;
 	private TitleScreen titleScreen;
 	private PlayScreen playScreen;
-	static public final int WIDTH = 800;
+	static public final int WIDTH = 832;
 	static public final int HEIGHT = 480;
 
 	@Override
@@ -18,7 +18,6 @@ public class SimStationGame extends Game {
 		Gdx.app.getGraphics().setDisplayMode(WIDTH, HEIGHT, false);
 		batch = new SpriteBatch();
 		titleScreen = new TitleScreen(this);
-		playScreen = new PlayScreen(this);
 		setScreen(titleScreen);
 	}
 
@@ -27,6 +26,7 @@ public class SimStationGame extends Game {
 	}
 
 	public void onNewGame() {
+		playScreen = new PlayScreen(this);
 		setScreen(playScreen);
 	}
 
@@ -36,5 +36,9 @@ public class SimStationGame extends Game {
 		titleScreen.dispose();
 		playScreen.dispose();
 		batch.dispose();
+	}
+
+	public void onQuit() {
+		Gdx.app.exit();
 	}
 }
