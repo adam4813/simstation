@@ -1,6 +1,7 @@
 package com.greenstargames.simstation.sprites;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.greenstargames.simstation.screens.PlayScreen;
 
@@ -23,7 +24,7 @@ public abstract class Renderable {
 		this.height = height;
 	}
 
-	public abstract void render(ShapeRenderer renderer);
+	public abstract void render(SpriteBatch batch, ShapeRenderer renderer);
 
 	public int getWidth() {
 		return width;
@@ -51,5 +52,9 @@ public abstract class Renderable {
 
 	public Color getColor() {
 		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 }

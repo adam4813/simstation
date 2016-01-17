@@ -2,25 +2,25 @@ package com.greenstargames.simstation.sprites;
 
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
-import com.greenstargames.simstation.sprites.modules.LivingQuartersModule;
+import com.greenstargames.simstation.sprites.modules.LivingQuarters;
 
 /**
  * Created by Adam on 1/2/2016.
  */
 public class Population {
-	private final LivingQuartersModule home;
+	private final LivingQuarters home;
 	private final float speed = 1.0f;
 	private Vector2 position;
 	private Vector2 currentPosition;
 	private Vector2 targetPosition;
-	public Population(LivingQuartersModule home) {
+	public Population(LivingQuarters home) {
 		this.home = home;
 		position = new Vector2();
 		currentPosition = new Vector2();
 		targetPosition = new Vector2();
 	}
 
-	public LivingQuartersModule getHome() {
+	public LivingQuarters getHome() {
 		return home;
 	}
 

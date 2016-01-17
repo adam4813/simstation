@@ -7,11 +7,11 @@ import com.greenstargames.simstation.screens.PlayScreen;
 import com.greenstargames.simstation.screens.TitleScreen;
 
 public class SimStationGame extends Game {
+	static public final int WIDTH = 832;
+	static public final int HEIGHT = 480;
 	private SpriteBatch batch;
 	private TitleScreen titleScreen;
 	private PlayScreen playScreen;
-	static public final int WIDTH = 832;
-	static public final int HEIGHT = 480;
 
 	@Override
 	public void create() {
@@ -34,7 +34,9 @@ public class SimStationGame extends Game {
 	public void dispose() {
 		super.dispose();
 		titleScreen.dispose();
-		playScreen.dispose();
+		if (playScreen != null) {
+			playScreen.dispose();
+		}
 		batch.dispose();
 	}
 

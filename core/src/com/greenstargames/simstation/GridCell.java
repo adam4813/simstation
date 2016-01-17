@@ -1,17 +1,18 @@
 package com.greenstargames.simstation;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.greenstargames.simstation.sprites.Clickable;
-import com.greenstargames.simstation.sprites.modules.StationModule;
+import com.greenstargames.simstation.sprites.modules.BaseModule;
 
 /**
  * Created by Adam on 12/28/2015.
  */
 public class GridCell implements Clickable {
-	private final StationModule hullModule;
-	private StationModule innerModule = null;
+	private final BaseModule hullModule;
+	private BaseModule innerModule = null;
 
-	public GridCell(StationModule hullModule) {
+	public GridCell(BaseModule hullModule) {
 		this.hullModule = hullModule;
 	}
 
@@ -19,11 +20,11 @@ public class GridCell implements Clickable {
 		return innerModule == null;
 	}
 
-	public StationModule getInnerModule() {
+	public BaseModule getInnerModule() {
 		return innerModule;
 	}
 
-	public void setInnerModule(StationModule module) {
+	public void setInnerModule(BaseModule module) {
 		innerModule = module;
 	}
 
@@ -36,16 +37,10 @@ public class GridCell implements Clickable {
 		return true;
 	}
 
-	public void render(ShapeRenderer shapeRenderer) {
-		hullModule.render(shapeRenderer);
+	public void render(SpriteBatch batch, ShapeRenderer shapeRenderer) {
+		hullModule.render(batch, shapeRenderer);
 		if (innerModule != null) {
-			innerModule.render(shapeRenderer);
-		}
-	}
-
-	public void update(float delta) {
-		if (innerModule != null) {
-			innerModule.update(delta);
+			innerModule.render(batch, shapeRenderer);
 		}
 	}
 }
