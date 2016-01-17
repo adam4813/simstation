@@ -11,6 +11,15 @@ import com.greenstargames.simstation.sprites.Renderable;
  */
 public abstract class BaseModule extends Renderable implements Clickable {
 	protected String name = "";
+	private int waterConsumed;
+	private boolean waterOff;
+	private int powerConsumed;
+	private boolean powerOff;
+
+	public BaseModule(Color color, int x, int y, int width, int height, String name) {
+		super(color, x, y, width, height);
+		this.name = name;
+	}
 
 	public int getWaterConsumed() {
 		return waterConsumed;
@@ -20,17 +29,13 @@ public abstract class BaseModule extends Renderable implements Clickable {
 		this.waterConsumed = waterConsumed;
 	}
 
-	private int waterConsumed;
-
-	public void setWaterOff(boolean waterOff) {
-		this.waterOff = waterOff;
-	}
-
 	public boolean isWaterOff() {
 		return waterOff;
 	}
 
-	private boolean waterOff;
+	public void setWaterOff(boolean waterOff) {
+		this.waterOff = waterOff;
+	}
 
 	public int getPowerConsumed() {
 		return powerConsumed;
@@ -40,25 +45,12 @@ public abstract class BaseModule extends Renderable implements Clickable {
 		this.powerConsumed = powerConsumed;
 	}
 
-	private int powerConsumed;
-
 	public boolean isPowerOff() {
 		return powerOff;
 	}
 
 	public void setPowerOff(boolean powerOff) {
 		this.powerOff = powerOff;
-	}
-
-	private boolean powerOff;
-
-	public void setPowerOff(boolean powerOff) {
-		this.powerOff = powerOff;
-	}
-
-	public BaseModule(Color color, int x, int y, int width, int height, String name) {
-		super(color, x, y, width, height);
-		this.name = name;
 	}
 
 	public abstract BaseModule factory(int x, int y);

@@ -1,7 +1,6 @@
 package com.greenstargames.simstation.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,13 +14,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.greenstargames.simstation.Grid;
 import com.greenstargames.simstation.SimStationGame;
+import com.greenstargames.simstation.sprites.modules.BaseModule;
 import com.greenstargames.simstation.sprites.modules.HullSection;
-import com.greenstargames.simstation.sprites.modules.LivingQuartersModule;
-import com.greenstargames.simstation.sprites.modules.StationModule;
+import com.greenstargames.simstation.sprites.modules.LivingQuarters;
+import com.greenstargames.simstation.sprites.modules.PowerGenerator;
+import com.greenstargames.simstation.sprites.modules.WaterPurifier;
 
 
 /**
@@ -29,9 +30,11 @@ import com.greenstargames.simstation.sprites.modules.StationModule;
  */
 public class PlayScreen implements Screen {
 	public static final int GRID_SIZE = 32;
-	private static final StationModule[] placeableModules = {
+	private static final BaseModule[] placeableModules = {
 			new HullSection(),
-			new LivingQuartersModule()
+			new LivingQuarters(),
+			new PowerGenerator(),
+			new WaterPurifier()
 	};
 	private final Stage stage;
 	private final SimStationGame game;
@@ -47,14 +50,15 @@ public class PlayScreen implements Screen {
 		camera.translate(SimStationGame.WIDTH / 2, SimStationGame.HEIGHT / 2);
 		camera.update();
 
-		viewport = new StretchViewport(SimStationGame.WIDTH, SimStationGame.HEIGHT, camera);
+		viewport = new FitViewport(SimStationGame.WIDTH, SimStationGame.HEIGHT, camera);
 		shapeRenderer = new ShapeRenderer();
+		shapeRenderer.setAutoShapeType(true);
 
 		grid = new Grid(SimStationGame.WIDTH / GRID_SIZE, SimStationGame.HEIGHT / GRID_SIZE - 1);
 
 		stage = new Stage();
 		stage.setViewport(viewport);
-		Gdx.input.setInputProcessor(stage);// Make the stage consume events
+		Gdx.input.setInputProcessor(stage);// Make the stage consumePower events
 		buildToolbox();
 	}
 
@@ -70,7 +74,7 @@ public class PlayScreen implements Screen {
 		int startingX = (SimStationGame.WIDTH / 2);
 		startingX -= (placeableModules.length * GRID_SIZE / 2);
 		for (int i = 0; i < placeableModules.length; ++i) {
-			StationModule module = placeableModules[i];
+			BaseModule module = placeableModules[i];
 			ImageButton placeableModuleButton = new ImageButton(skin.newDrawable("background", module.getColor())); // Use the initialized skin
 			final int finalI = i;
 			placeableModuleButton.addListener(new ChangeListener() {
@@ -88,7 +92,7 @@ public class PlayScreen implements Screen {
 		if (Gdx.input.justTouched()) {
 			// input.getX and input.getY are in world coordinates so unproject them to screen coordinates.
 			Vector3 worldCoordinates = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(worldCoordinates);
+			viewport.unproject(worldCoordinates);
 			int x = (int) (worldCoordinates.x / GRID_SIZE);
 			int y = (int) (worldCoordinates.y / GRID_SIZE);
 
@@ -99,36 +103,36 @@ public class PlayScreen implements Screen {
 			}
 		}
 
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
-			selectedPlaceableModule = placeableModules.length;
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-			selectedPlaceableModule = 0;
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-			selectedPlaceableModule = 1;
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
-			selectedPlaceableModule = 2;
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
-			selectedPlaceableModule = 3;
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
-			selectedPlaceableModule = 4;
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
-			selectedPlaceableModule = 5;
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
-			selectedPlaceableModule = 6;
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
-			selectedPlaceableModule = 7;
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) {
-			selectedPlaceableModule = 8;
-		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
+//			selectedPlaceableModule = placeableModules.length;
+//		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+//			selectedPlaceableModule = 0;
+//		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
+//			selectedPlaceableModule = 1;
+//		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+//			selectedPlaceableModule = 2;
+//		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
+//			selectedPlaceableModule = 3;
+//		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
+//			selectedPlaceableModule = 4;
+//		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
+//			selectedPlaceableModule = 5;
+//		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
+//			selectedPlaceableModule = 6;
+//		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
+//			selectedPlaceableModule = 7;
+//		}
+//		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) {
+//			selectedPlaceableModule = 8;
+//		}
 	}
 
 	@Override
@@ -145,20 +149,36 @@ public class PlayScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		game.getBatch().setProjectionMatrix(camera.combined);
+		game.getBatch().begin();
 
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-		grid.render(shapeRenderer);
+		grid.render(game.getBatch(), shapeRenderer);
 		stage.draw();
 		// input.getX and input.getY are in world coordinates so unproject them to screen coordinates.
 		Vector3 worldCoords = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-		camera.unproject(worldCoords);
+		viewport.unproject(worldCoords);
 		if (selectedPlaceableModule < placeableModules.length) {
-			placeableModules[selectedPlaceableModule].setX((int) (worldCoords.x / GRID_SIZE));
-			placeableModules[selectedPlaceableModule].setY((int) (worldCoords.y / GRID_SIZE));
-			placeableModules[selectedPlaceableModule].render(shapeRenderer);
+			Actor selectedActor = stage.getActors().get(selectedPlaceableModule);
+			shapeRenderer.setColor(Color.RED);
+			shapeRenderer.rectLine(selectedActor.getX(), selectedActor.getY(),
+					selectedActor.getX() + selectedActor.getWidth(), selectedActor.getY(), 3.0f);
+			shapeRenderer.rectLine(selectedActor.getX(), selectedActor.getY(),
+					selectedActor.getX(), selectedActor.getY() + selectedActor.getHeight(), 3.0f);
+			shapeRenderer.rectLine(selectedActor.getWidth() + selectedActor.getX(), selectedActor.getY(),
+					selectedActor.getWidth() + selectedActor.getX(), selectedActor.getY() + selectedActor.getHeight(), 3.0f);
+			shapeRenderer.rectLine(selectedActor.getX(), selectedActor.getY() + selectedActor.getHeight(),
+					selectedActor.getX() + selectedActor.getWidth(), selectedActor.getY() + selectedActor.getHeight(), 3.0f);
+			Vector3 toolArea = new Vector3(0, GRID_SIZE, 0);
+			viewport.project(toolArea);
+			if (Gdx.input.getY() > toolArea.y) {
+				placeableModules[selectedPlaceableModule].setX((int) (worldCoords.x / GRID_SIZE));
+				placeableModules[selectedPlaceableModule].setY((int) (worldCoords.y / GRID_SIZE));
+				placeableModules[selectedPlaceableModule].render(game.getBatch(), shapeRenderer);
+			}
 		}
 		shapeRenderer.end();
+		game.getBatch().end();
 	}
 
 	@Override

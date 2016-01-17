@@ -22,9 +22,9 @@ import com.greenstargames.simstation.SimStationGame;
  */
 public class TitleScreen implements Screen {
 	private final SimStationGame game;
-	private Skin skin;
 	private final Stage stage;
 	private final Viewport viewport;
+	private Skin skin;
 
 	public TitleScreen(SimStationGame simStationGame) {
 		game = simStationGame;
@@ -108,7 +108,8 @@ public class TitleScreen implements Screen {
 		stage.draw();
 	}
 
-	private void processInput(float delta) {	}
+	private void processInput(float delta) {
+	}
 
 	@Override
 	public void resize(int width, int height) {
