@@ -75,7 +75,7 @@ public class Grid {
 			@Override
 			public void canceled() {
 			}
-		}, "save as..", "", "saveFilename");
+		}, "save as..", "", saveFilename);
 	}
 
 	public void load(String filename) {

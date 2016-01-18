@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.greenstargames.simstation.screens.PlayScreen;
 
 /**
@@ -35,7 +34,7 @@ public abstract class Renderable {
 		sprite.setSize(width * GRID_SIZE, height * GRID_SIZE);
 	}
 
-	public void render(SpriteBatch batch, ShapeRenderer renderer) {
+	public void render(SpriteBatch batch) {
 		if (sprite != null) {
 			sprite.setPosition(x * GRID_SIZE, y * GRID_SIZE);
 			sprite.draw(batch);
