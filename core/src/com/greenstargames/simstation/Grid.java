@@ -14,47 +14,47 @@ import java.util.ArrayList;
  * Created by Adam on 12/28/2015.
  */
 public class Grid {
-	private GridCell[][] gridCells;
+
+	private Cell[][] cells;
 	private ArrayList<Producer> producers = new ArrayList<Producer>();
 	private int width;
 	private int height;
-
 	public Grid(int width, int height) {
 		this.width = width;
 		this.height = height;
-		gridCells = new GridCell[width][height];
-		gridCells[10][10] = new GridCell(new HullSection(10, 10));
+		cells = new Cell[width][height];
+		cells[10][10] = new Cell(new HullSection(10, 10));
 	}
 
 	// TODO: Multi-cell element
 	public boolean tryPlace(BaseModule module, int x, int y) {
 		if ((x < width && x >= 0) && (y < height && y >= 0)) {
-			if (gridCells[x][y] == null) {
+			if (cells[x][y] == null) {
 				if (module.isHull()) {
 					int neighborCount = 0;
 					for (int i = -1; i <= 1; i += 2) {
 						if ((x + i < width) && (x + i >= 0)) {
-							if (gridCells[x + i][y] != null) {
+							if (cells[x + i][y] != null) {
 								neighborCount++;
 							}
 						}
 					}
 					for (int i = -1; i <= 1; i += 2) {
 						if ((y + i < height) && (y + i >= 0)) {
-							if (gridCells[x][y + i] != null) {
+							if (cells[x][y + i] != null) {
 								neighborCount++;
 							}
 						}
 					}
 					if (neighborCount > 0) {
-						gridCells[x][y] = new GridCell(module);
+						cells[x][y] = new Cell(module);
 					}
 				} else {
 					return false;
 				}
 			} else {
-				if (!module.isHull() && gridCells[x][y].isEmpty()) {
-					gridCells[x][y].setInnerModule(module);
+				if (!module.isHull() && cells[x][y].innerModule == null) {
+					cells[x][y].innerModule = module;
 					if (module instanceof Producer) {
 						producers.add((Producer) module);
 					}
@@ -65,18 +65,36 @@ public class Grid {
 		return false;
 	}
 
-	public GridCell getCell(int x, int y) {
+	public boolean canPlace(BaseModule module, int x, int y) {
 		if ((x < width && x >= 0) && (y < height && y >= 0)) {
-			return gridCells[x][y];
+			if (cells[x][y] == null) {
+				if (module.isHull()) {
+					return true;
+				}
+			} else {
+				if (!module.isHull() && cells[x][y].innerModule == null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public Cell getCell(int x, int y) {
+		if ((x < width && x >= 0) && (y < height && y >= 0)) {
+			return cells[x][y];
 		}
 		return null;
 	}
 
 	public void render(SpriteBatch batch, ShapeRenderer shapeRenderer) {
-		for (GridCell[] cellRow : gridCells) {
-			for (GridCell cell : cellRow) {
+		for (Cell[] cellRow : cells) {
+			for (Cell cell : cellRow) {
 				if (cell != null) {
-					cell.render(batch, shapeRenderer);
+					cell.hullModule.render(batch, shapeRenderer);
+					if (cell.innerModule != null) {
+						cell.innerModule.render(batch, shapeRenderer);
+					}
 				}
 			}
 		}
@@ -84,9 +102,9 @@ public class Grid {
 
 	public void onClick(int x, int y) {
 		if ((x < width && x >= 0) && (y < height && y >= 0)) {
-			GridCell cell = gridCells[x][y];
+			Cell cell = cells[x][y];
 			if (cell != null) {
-				cell.onClick();
+				cell.innerModule.onClick();
 			}
 		}
 	}
@@ -102,33 +120,41 @@ public class Grid {
 				totalAvailableWater += producer.getAvailableUnits();
 			}
 		}
-		//Gdx.app.log("Grid::Update", "Total Power: " + Integer.toString(totalAvailablePower));
-		//Gdx.app.log("Grid::Update", "Total Water: " + Integer.toString(totalAvailableWater));
-		for (GridCell[] cellRow : gridCells) {
-			for (GridCell cell : cellRow) {
+		for (Cell[] cellRow : cells) {
+			for (Cell cell : cellRow) {
 				if (cell != null) {
-					BaseModule module = cell.getInnerModule();
-					if (module != null) {
-						int modulePower = module.getPowerConsumed();
+					if (cell.innerModule != null) {
+						int modulePower = cell.innerModule.getPowerConsumed();
 						if (modulePower <= totalAvailablePower) {
-							module.setPowerOff(false);
+							cell.innerModule.setPowerOff(false);
 							totalAvailablePower -= modulePower;
 						} else {
-							module.setPowerOff(true);
+							cell.innerModule.setPowerOff(true);
 						}
-						int moduleWater = module.getWaterConsumed();
+						int moduleWater = cell.innerModule.getWaterConsumed();
 						if (moduleWater <= totalAvailableWater) {
-							module.setWaterOff(false);
+							cell.innerModule.setWaterOff(false);
 							totalAvailableWater -= moduleWater;
 						} else {
-							module.setWaterOff(true);
+							cell.innerModule.setWaterOff(true);
 						}
-						module.update(delta);
+						cell.innerModule.update(delta);
 					}
 				}
 			}
 		}
-		//Gdx.app.log("Grid::Update", "Power Left: " + Integer.toString(totalAvailablePower));
-		//Gdx.app.log("Grid::Update", "Water Left: " + Integer.toString(totalAvailableWater));
+	}
+
+	public class Cell {
+		private final BaseModule hullModule;
+		private BaseModule innerModule = null;
+
+		public Cell(BaseModule hullModule) {
+			this.hullModule = hullModule;
+		}
+
+		public BaseModule getInnerModule() {
+			return innerModule;
+		}
 	}
 }

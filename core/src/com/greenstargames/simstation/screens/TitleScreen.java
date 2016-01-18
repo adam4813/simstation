@@ -39,35 +39,6 @@ public class TitleScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);// Make the stage consume events
 
 		createBasicSkin();
-		TextButton newGameButton = new TextButton("New game", skin); // Use the initialized skin
-		newGameButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				game.onNewGame();
-			}
-		});
-		newGameButton.setPosition(Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 8, Gdx.graphics.getHeight() / 4 * 3 - Gdx.graphics.getHeight() / 8);
-		stage.addActor(newGameButton);
-
-		TextButton loadGameButton = new TextButton("Load game", skin); // Use the initialized skin
-		loadGameButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				//game.onLoadGame();
-			}
-		});
-		loadGameButton.setPosition(Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 8, Gdx.graphics.getHeight() / 2);
-		stage.addActor(loadGameButton);
-
-		TextButton quitGameButton = new TextButton("Quit", skin); // Use the initialized skin
-		quitGameButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				game.onQuit();
-			}
-		});
-		quitGameButton.setPosition(Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 8, Gdx.graphics.getHeight() / 4 + Gdx.graphics.getHeight() / 8);
-		stage.addActor(quitGameButton);
 	}
 
 	private void createBasicSkin() {
@@ -114,6 +85,36 @@ public class TitleScreen implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height);
+		stage.clear();
+		TextButton newGameButton = new TextButton("New game", skin); // Use the initialized skin
+		newGameButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				game.onNewGame();
+			}
+		});
+		newGameButton.setPosition(viewport.getWorldWidth() / 2 - viewport.getWorldWidth() / 8, viewport.getWorldHeight() / 4 * 3 - viewport.getWorldHeight() / 8);
+		stage.addActor(newGameButton);
+
+		TextButton loadGameButton = new TextButton("Load game", skin); // Use the initialized skin
+		loadGameButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				//game.onLoadGame();
+			}
+		});
+		loadGameButton.setPosition(viewport.getWorldWidth() / 2 - viewport.getWorldWidth() / 8, viewport.getWorldHeight() / 2);
+		stage.addActor(loadGameButton);
+
+		TextButton quitGameButton = new TextButton("Quit", skin); // Use the initialized skin
+		quitGameButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				game.onQuit();
+			}
+		});
+		quitGameButton.setPosition(viewport.getWorldWidth() / 2 - viewport.getWorldWidth() / 8, viewport.getWorldHeight() / 4 + viewport.getWorldHeight() / 8);
+		stage.addActor(quitGameButton);
 	}
 
 	@Override
