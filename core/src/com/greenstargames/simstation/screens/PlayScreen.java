@@ -1,7 +1,6 @@
 package com.greenstargames.simstation.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -27,6 +27,7 @@ import com.greenstargames.simstation.sprites.modules.BaseModule;
 import com.greenstargames.simstation.sprites.modules.HullSection;
 import com.greenstargames.simstation.sprites.modules.LivingQuarters;
 import com.greenstargames.simstation.sprites.modules.PowerGenerator;
+import com.greenstargames.simstation.sprites.modules.ScienceLab;
 import com.greenstargames.simstation.sprites.modules.WaterPurifier;
 
 
@@ -39,8 +40,12 @@ public class PlayScreen implements Screen {
 			new HullSection(),
 			new LivingQuarters(),
 			new PowerGenerator(),
-			new WaterPurifier()
+			new WaterPurifier(),
+			new ScienceLab()
 	};
+	public static Sprite NO_WORKER_SPRITE;
+	public static Sprite NO_POWER_SPRITE;
+	public static Sprite NO_WATER_SPRITE;
 	private final Stage stage;
 	private final SimStationGame game;
 	private final OrthographicCamera camera;
@@ -52,6 +57,7 @@ public class PlayScreen implements Screen {
 	private int dragAccumulatorX = 0;
 	private int dragAccumulatorY = 0;
 	private boolean mapDragging = false;
+	private Sprite bkgd;
 
 	public PlayScreen(SimStationGame simStationGame) {
 		game = simStationGame;
@@ -63,15 +69,27 @@ public class PlayScreen implements Screen {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setAutoShapeType(true);
 
-		grid = new Grid(SimStationGame.WIDTH / GRID_SIZE, SimStationGame.HEIGHT / GRID_SIZE - 1);
+		grid = new Grid();
 
 		stage = new Stage();
 		stage.getViewport().update(SimStationGame.WIDTH, SimStationGame.HEIGHT, true);
 
-		InputMultiplexer inputMultiplexer = new InputMultiplexer();
-		inputMultiplexer.addProcessor(stage);
-		Gdx.input.setInputProcessor(inputMultiplexer);
 		buildToolbox();
+		NO_WORKER_SPRITE = new Sprite(new Texture(Gdx.files.internal("no_worker.png")));
+		NO_WORKER_SPRITE.setColor(1.0f, 0.0f, 1.0f, 1.0f);
+		NO_WORKER_SPRITE.setSize(16.0f, 16.0f);
+		NO_POWER_SPRITE = new Sprite(new Texture(Gdx.files.internal("no_power.png")));
+		NO_POWER_SPRITE.setColor(1.0f, 0.0f, 1.0f, 1.0f);
+		NO_POWER_SPRITE.setSize(16.0f, 16.0f);
+		NO_WATER_SPRITE = new Sprite(new Texture(Gdx.files.internal("no_water.png")));
+		NO_WATER_SPRITE.setColor(1.0f, 0.0f, 1.0f, 1.0f);
+		NO_WATER_SPRITE.setSize(16.0f, 16.0f);
+		bkgd = new Sprite(new Texture(Gdx.files.internal("bkgd.png")));
+		bkgd.getTexture().setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
+		bkgd.setPosition(-8192.0f, -8192.0f);
+		bkgd.setSize(16536.0f, 16536.0f);
+		bkgd.setU(16536.0f);
+		bkgd.setV(16536.0f);
 	}
 
 	private void buildToolbox() {
@@ -122,6 +140,87 @@ public class PlayScreen implements Screen {
 			placeableModuleButton.setPosition(startingX + i * GRID_SIZE, SimStationGame.HEIGHT - GRID_SIZE);
 			stage.addActor(placeableModuleButton);
 		}
+		Sprite homeButtonSprite = new Sprite(new Texture(Gdx.files.internal("home.png")));
+		homeButtonSprite.setSize(GRID_SIZE, GRID_SIZE);
+		ImageButton homeButton = new ImageButton(new SpriteDrawable(homeButtonSprite));
+
+		homeButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				camera.position.set(SimStationGame.WIDTH / 2, SimStationGame.HEIGHT / 2, 0.0f);
+			}
+		});
+		homeButton.addListener(new ClickListener() {
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				super.enter(event, x, y, pointer, fromActor);
+				hoverToolArea = true;
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				super.exit(event, x, y, pointer, toActor);
+				hoverToolArea = false;
+			}
+		});
+		homeButton.setPosition(startingX + placeableModules.length * GRID_SIZE, SimStationGame.HEIGHT - GRID_SIZE);
+		stage.addActor(homeButton);
+
+		Sprite menuButtonSprite = new Sprite(new Texture(Gdx.files.internal("menu.png")));
+		menuButtonSprite.setSize(GRID_SIZE, GRID_SIZE);
+		ImageButton menuButton = new ImageButton(new SpriteDrawable(menuButtonSprite));
+
+		menuButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				game.onPause();
+			}
+		});
+		menuButton.addListener(new ClickListener() {
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				super.enter(event, x, y, pointer, fromActor);
+				hoverToolArea = true;
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				super.exit(event, x, y, pointer, toActor);
+				hoverToolArea = false;
+			}
+		});
+		menuButton.setPosition(startingX - GRID_SIZE, SimStationGame.HEIGHT - GRID_SIZE);
+		stage.addActor(menuButton);
+
+		Sprite saveButtonSprite = new Sprite(new Texture(Gdx.files.internal("save.png")));
+		saveButtonSprite.setSize(GRID_SIZE, GRID_SIZE);
+		ImageButton saveButton = new ImageButton(new SpriteDrawable(saveButtonSprite));
+
+		saveButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				grid.save();
+			}
+		});
+		saveButton.addListener(new ClickListener() {
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				super.enter(event, x, y, pointer, fromActor);
+				hoverToolArea = true;
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				super.exit(event, x, y, pointer, toActor);
+				hoverToolArea = false;
+			}
+		});
+		saveButton.setPosition(startingX - GRID_SIZE * 2, SimStationGame.HEIGHT - GRID_SIZE);
+		stage.addActor(saveButton);
+	}
+
+	public void loadSave(String filename) {
+		grid.load(filename);
 	}
 
 	private void processInput(float delta) {
@@ -213,13 +312,13 @@ public class PlayScreen implements Screen {
 		stage.act(delta);
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-		Gdx.gl.glEnable(GL20.GL_BLEND);
-		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-		stage.draw();
-		game.getBatch().setProjectionMatrix(camera.combined);
-		game.getBatch().begin();
-		grid.render(game.getBatch(), shapeRenderer);
+		SpriteBatch batch = game.getBatch();
+		batch.enableBlending();
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		bkgd.draw(batch);
+		grid.render(batch);
 		// input.getX and input.getY are in world coordinates so unproject them to screen coordinates.
 		Vector3 worldCoords = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 		camera.unproject(worldCoords);
@@ -233,11 +332,13 @@ public class PlayScreen implements Screen {
 				}
 				placeableModules[selectedPlaceableModule].setX((int) (worldCoords.x / GRID_SIZE));
 				placeableModules[selectedPlaceableModule].setY((int) (worldCoords.y / GRID_SIZE));
-				placeableModules[selectedPlaceableModule].render(game.getBatch(), shapeRenderer);
+				placeableModules[selectedPlaceableModule].render(batch);
 
 			}
 		}
-		game.getBatch().end();
+		batch.end();
+
+		stage.draw();
 
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -247,22 +348,22 @@ public class PlayScreen implements Screen {
 			float actorY = selectedActor.getY() + (camera.position.y - SimStationGame.HEIGHT / 2);
 			shapeRenderer.setColor(Color.RED);
 			shapeRenderer.rectLine(actorX, actorY,
-					actorX + selectedActor.getWidth(), actorY, 3.0f);
+					actorX + selectedActor.getWidth(), actorY, 1.0f);
 			shapeRenderer.rectLine(actorX, actorY,
-					actorX, actorY + selectedActor.getHeight(), 3.0f);
+					actorX, actorY + selectedActor.getHeight(), 1.0f);
 			shapeRenderer.rectLine(actorX + selectedActor.getWidth(), actorY,
-					actorX + selectedActor.getWidth(), actorY + selectedActor.getHeight(), 3.0f);
+					actorX + selectedActor.getWidth(), actorY + selectedActor.getHeight(), 1.0f);
 			shapeRenderer.rectLine(actorX, actorY + selectedActor.getHeight(),
-					actorX + selectedActor.getWidth(), actorY + selectedActor.getHeight(), 3.0f);
+					actorX + selectedActor.getWidth(), actorY + selectedActor.getHeight(), 1.0f);
 		}
 		shapeRenderer.end();
-		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		stage.getViewport().update(width, height, true);
+		Gdx.input.setInputProcessor(stage);
 	}
 
 	@Override
@@ -284,5 +385,9 @@ public class PlayScreen implements Screen {
 	public void dispose() {
 		shapeRenderer.dispose();
 		stage.dispose();
+	}
+
+	public void newGame() {
+		grid.reset(26, 14);
 	}
 }

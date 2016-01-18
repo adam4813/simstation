@@ -1,11 +1,15 @@
 package com.greenstargames.simstation;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.TextInputListener;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.greenstargames.simstation.sprites.modules.BaseModule;
 import com.greenstargames.simstation.sprites.modules.HullSection;
+import com.greenstargames.simstation.sprites.modules.LivingQuarters;
 import com.greenstargames.simstation.sprites.modules.PowerGenerator;
 import com.greenstargames.simstation.sprites.modules.Producer;
+import com.greenstargames.simstation.sprites.modules.ScienceLab;
 import com.greenstargames.simstation.sprites.modules.WaterPurifier;
 
 import java.util.ArrayList;
@@ -14,16 +18,99 @@ import java.util.ArrayList;
  * Created by Adam on 12/28/2015.
  */
 public class Grid {
-
 	private Cell[][] cells;
 	private ArrayList<Producer> producers = new ArrayList<Producer>();
 	private int width;
 	private int height;
-	public Grid(int width, int height) {
+	private String saveFilename = "";
+
+	public Grid() {
+	}
+
+	public void reset(int width, int height) {
+		resize(width, height);
+		cells[10][10] = new Cell(new HullSection(10, 10));
+	}
+
+	public void resize(int width, int height) {
 		this.width = width;
 		this.height = height;
 		cells = new Cell[width][height];
-		cells[10][10] = new Cell(new HullSection(10, 10));
+	}
+
+	public void save() {
+		String output = width + "," + height + ",";
+		for (int i = 0; i < width; ++i) {
+			for (int j = 0; j < height; ++j) {
+				if (cells[i][j] != null) {
+					BaseModule module = cells[i][j].innerModule;
+					if (module != null) {
+						if (module instanceof PowerGenerator) {
+							output += "2";
+						} else if (module instanceof WaterPurifier) {
+							output += "3";
+						} else if (module instanceof LivingQuarters) {
+							output += "4";
+						} else if (module instanceof ScienceLab) {
+							output += "5";
+						}
+					} else {
+						output += "1";
+					}
+				} else {
+					output += "0";
+				}
+			}
+		}
+
+		final String finalOutput = output;
+		Gdx.input.getTextInput(new TextInputListener() {
+			@Override
+			public void input(String text) {
+				saveFilename = text;
+				FileHandle file = Gdx.files.local("saves/" + text + ".sss");
+				file.writeString(finalOutput, true);
+			}
+
+			@Override
+			public void canceled() {
+			}
+		}, "save as..", "", "saveFilename");
+	}
+
+	public void load(String filename) {
+		FileHandle file = Gdx.files.local("saves/" + filename + ".sss");
+		saveFilename = filename;
+		String input = file.readString();
+		int width = Integer.parseInt(input.substring(0, input.indexOf(",")));
+		int height = Integer.parseInt(input.substring(input.indexOf(",") + 1, input.indexOf(",", input.indexOf(",") + 1)));
+		resize(width, height);
+		String cellString = input.substring(input.lastIndexOf(",") + 1);
+		for (int j = 0; j < height; ++j) {
+			for (int i = 0; i < width; ++i) {
+				char c = cellString.charAt(i * height + j);
+				if (c != '0') {
+					cells[i][j] = new Cell(new HullSection(i, j));
+					switch (c) {
+						case '5':
+							tryPlace(new ScienceLab(i, j), i, j);
+							break;
+						case '4':
+							tryPlace(new LivingQuarters(i, j), i, j);
+							break;
+						case '3':
+							tryPlace(new WaterPurifier(i, j), i, j);
+							break;
+						case '2':
+							tryPlace(new PowerGenerator(i, j), i, j);
+							break;
+						case '1':
+							tryPlace(new HullSection(i, j), i, j);
+							break;
+					}
+				}
+			}
+		}
 	}
 
 	// TODO: Multi-cell element
@@ -87,13 +174,13 @@ public class Grid {
 		return null;
 	}
 
-	public void render(SpriteBatch batch, ShapeRenderer shapeRenderer) {
+	public void render(SpriteBatch batch) {
 		for (Cell[] cellRow : cells) {
 			for (Cell cell : cellRow) {
 				if (cell != null) {
-					cell.hullModule.render(batch, shapeRenderer);
+					cell.hullModule.render(batch);
 					if (cell.innerModule != null) {
-						cell.innerModule.render(batch, shapeRenderer);
+						cell.innerModule.render(batch);
 					}
 				}
 			}
@@ -112,12 +199,15 @@ public class Grid {
 	public void update(float delta) {
 		int totalAvailablePower = 0;
 		int totalAvailableWater = 0;
+		int totalAvailablePopulation = 0;
 		for (Producer producer : producers) {
 			producer.update(delta);
 			if (producer instanceof PowerGenerator) {
 				totalAvailablePower += producer.getAvailableUnits();
 			} else if (producer instanceof WaterPurifier) {
 				totalAvailableWater += producer.getAvailableUnits();
+			} else if (producer instanceof LivingQuarters) {
+				totalAvailablePopulation += producer.getAvailableUnits();
 			}
 		}
 		for (Cell[] cellRow : cells) {
@@ -137,6 +227,13 @@ public class Grid {
 							totalAvailableWater -= moduleWater;
 						} else {
 							cell.innerModule.setWaterOff(true);
+						}
+						int modulePopulation = cell.innerModule.getWorkersConsumed();
+						if (modulePopulation <= totalAvailablePopulation) {
+							cell.innerModule.setWorkerOff(false);
+							totalAvailablePopulation -= modulePopulation;
+						} else {
+							cell.innerModule.setWorkerOff(true);
 						}
 						cell.innerModule.update(delta);
 					}

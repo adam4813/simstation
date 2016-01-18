@@ -2,6 +2,7 @@ package com.greenstargames.simstation.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -10,24 +11,33 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.greenstargames.simstation.SimStationGame;
 
+import java.util.ArrayList;
+
 /**
- * Created by Adam on 12/19/2015.
+ * Created by Adam on 1/18/2016.
  */
-public class TitleScreen implements Screen {
+public class LoadScreen implements Screen {
 	private final SimStationGame game;
 	private final Stage stage;
+	private final Table table;
 	private final Viewport viewport;
 	private Skin skin;
-	private boolean paused;
+	private ArrayList<String> saveFilenames = new ArrayList<String>();
+	private List list;
+	private ScrollPane scrollPane;
+	private TextButton back, load;
 
-	public TitleScreen(SimStationGame simStationGame) {
+	public LoadScreen(SimStationGame simStationGame) {
 		game = simStationGame;
 		OrthographicCamera camera = new OrthographicCamera(SimStationGame.WIDTH, SimStationGame.HEIGHT);
 		camera.translate(SimStationGame.WIDTH / 2, SimStationGame.HEIGHT / 2);
@@ -36,9 +46,17 @@ public class TitleScreen implements Screen {
 		viewport = new FitViewport(SimStationGame.WIDTH, SimStationGame.HEIGHT, camera);
 
 		stage = new Stage();
+		table = new Table(skin);
+		table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		stage.setViewport(viewport);
 
 		createBasicSkin();
+		FileHandle[] files = Gdx.files.local("saves/").list();
+		for (FileHandle file : files) {
+			if (file.extension().compareTo("sss") == 0) {
+				saveFilenames.add(file.nameWithoutExtension());
+			}
+		}
 	}
 
 	private void createBasicSkin() {
@@ -61,11 +79,48 @@ public class TitleScreen implements Screen {
 		textButtonStyle.over = skin.newDrawable("background", Color.LIGHT_GRAY);
 		textButtonStyle.font = skin.getFont("default");
 		skin.add("default", textButtonStyle);
+		List.ListStyle listStyle = new List.ListStyle();
+		listStyle.background = skin.newDrawable("background", new Color(0.0f, 0.0f, 0.0f, 0.0f));
+		listStyle.font = font;
+		listStyle.selection = skin.newDrawable("background", Color.BLUE);
+		skin.add("default", listStyle);
+		ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle();
+		skin.add("default", scrollPaneStyle);
 	}
 
 	@Override
 	public void show() {
+		Gdx.input.setInputProcessor(stage);
+		stage.clear();
+		table.clear();
 
+		list = new List(skin);
+		list.setItems(saveFilenames.toArray());
+		scrollPane = new ScrollPane(list, skin);
+
+		back = new TextButton("back", skin);
+		back.pad(1.0f);
+		back.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				game.onPause();
+			}
+		});
+		load = new TextButton("load", skin);
+		load.pad(1.0f);
+		load.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				game.onLoadSave((String) list.getSelected());
+			}
+		});
+
+		//table.add("Pick a save").row();
+		table.add(scrollPane).row();
+		table.add().height(5.0f).row();
+		table.add(back);
+		table.add(load);
+		stage.addActor(table);
 	}
 
 	@Override
@@ -81,49 +136,6 @@ public class TitleScreen implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height);
-		stage.clear();
-		if (paused) {
-			TextButton newGameButton = new TextButton("Resume", skin); // Use the initialized skin
-			newGameButton.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					game.onResume();
-				}
-			});
-			newGameButton.setPosition(viewport.getWorldWidth() / 2 - viewport.getWorldWidth() / 8, viewport.getWorldHeight() / 4 * 3 - viewport.getWorldHeight() / 8);
-			stage.addActor(newGameButton);
-		} else {
-			TextButton newGameButton = new TextButton("New game", skin); // Use the initialized skin
-			newGameButton.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					game.onNewGame();
-				}
-			});
-			newGameButton.setPosition(viewport.getWorldWidth() / 2 - viewport.getWorldWidth() / 8, viewport.getWorldHeight() / 4 * 3 - viewport.getWorldHeight() / 8);
-			stage.addActor(newGameButton);
-		}
-
-		TextButton loadGameButton = new TextButton("Load game", skin); // Use the initialized skin
-		loadGameButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				game.onShowLoadScreen();
-			}
-		});
-		loadGameButton.setPosition(viewport.getWorldWidth() / 2 - viewport.getWorldWidth() / 8, viewport.getWorldHeight() / 2);
-		stage.addActor(loadGameButton);
-
-		TextButton quitGameButton = new TextButton("Quit", skin); // Use the initialized skin
-		quitGameButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				game.onQuit();
-			}
-		});
-		quitGameButton.setPosition(viewport.getWorldWidth() / 2 - viewport.getWorldWidth() / 8, viewport.getWorldHeight() / 4 + viewport.getWorldHeight() / 8);
-		stage.addActor(quitGameButton);
-		Gdx.input.setInputProcessor(stage);// Make the stage consume events
 	}
 
 	@Override
@@ -145,13 +157,5 @@ public class TitleScreen implements Screen {
 	public void dispose() {
 		stage.dispose();
 		skin.dispose();
-	}
-
-	public boolean isPaused() {
-		return paused;
-	}
-
-	public void setPaused(boolean paused) {
-		this.paused = paused;
 	}
 }

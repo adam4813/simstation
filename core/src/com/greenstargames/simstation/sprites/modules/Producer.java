@@ -17,6 +17,10 @@ public abstract class Producer extends BaseModule {
 		return maxUnitOutput;
 	}
 
+	public void setMaxUnitOutput(int maxUnitOutput) {
+		this.maxUnitOutput = maxUnitOutput;
+	}
+
 	public int getAvailableUnits() {
 		return availableUnits;
 	}

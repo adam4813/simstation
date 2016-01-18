@@ -10,17 +10,19 @@ import java.util.Random;
 /**
  * Created by Adam on 12/21/2015.
  */
-public class LivingQuarters extends BaseModule {
+public class LivingQuarters extends Producer {
 	static private final Color blueColor = new Color(Color.BLUE);
 	static private final int MAX_POPULATION = 4;
-	static private final int POWER_CONSUMED = 4;
-	static private final int WATER_CONSUMED = 4;
+	static private final int POWER_CONSUMED = 2;
+	static private final int WATER_CONSUMED = 2;
 	private final ArrayList<Population> populations = new ArrayList<Population>();
 
 	public LivingQuarters(int x, int y) {
 		super(new Color(Color.CORAL), x, y, 1, 1, "living quarters");
 		setPowerConsumed(POWER_CONSUMED);
 		setWaterConsumed(WATER_CONSUMED);
+		setMaxUnitOutput(MAX_POPULATION);
+		setWorkersConsumed(0);
 		loadTexture("living_quarters.png");
 	}
 
@@ -77,6 +79,7 @@ public class LivingQuarters extends BaseModule {
 
 	@Override
 	public void update(float delta) {
+		super.update(delta);
 		for (Population population : populations) {
 			if (population.movingToTarget()) {
 				population.update(delta);

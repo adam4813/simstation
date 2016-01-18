@@ -3,6 +3,7 @@ package com.greenstargames.simstation;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.greenstargames.simstation.screens.LoadScreen;
 import com.greenstargames.simstation.screens.PlayScreen;
 import com.greenstargames.simstation.screens.TitleScreen;
 
@@ -12,12 +13,15 @@ public class SimStationGame extends Game {
 	private SpriteBatch batch;
 	private TitleScreen titleScreen;
 	private PlayScreen playScreen;
+	private LoadScreen loadScreen;
 
 	@Override
 	public void create() {
 		Gdx.app.getGraphics().setDisplayMode(WIDTH, HEIGHT, false);
 		batch = new SpriteBatch();
 		titleScreen = new TitleScreen(this);
+		playScreen = new PlayScreen(this);
+		loadScreen = new LoadScreen(this);
 		setScreen(titleScreen);
 	}
 
@@ -26,8 +30,17 @@ public class SimStationGame extends Game {
 	}
 
 	public void onNewGame() {
-		playScreen = new PlayScreen(this);
+		playScreen.newGame();
 		setScreen(playScreen);
+	}
+
+	public void onResume() {
+		setScreen(playScreen);
+	}
+
+	public void onPause() {
+		titleScreen.setPaused(true);
+		setScreen(titleScreen);
 	}
 
 	@Override
@@ -42,5 +55,14 @@ public class SimStationGame extends Game {
 
 	public void onQuit() {
 		Gdx.app.exit();
+	}
+
+	public void onShowLoadScreen() {
+		setScreen(loadScreen);
+	}
+
+	public void onLoadSave(String filename) {
+		playScreen.loadSave(filename);
+		setScreen(playScreen);
 	}
 }
