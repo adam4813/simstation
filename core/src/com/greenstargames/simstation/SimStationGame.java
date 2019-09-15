@@ -17,7 +17,7 @@ public class SimStationGame extends Game {
 
 	@Override
 	public void create() {
-		Gdx.app.getGraphics().setDisplayMode(WIDTH, HEIGHT, false);
+		Gdx.app.getGraphics().setWindowedMode(WIDTH, HEIGHT);
 		batch = new SpriteBatch();
 		titleScreen = new TitleScreen(this);
 		playScreen = new PlayScreen(this);
